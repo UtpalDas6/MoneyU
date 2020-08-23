@@ -1,9 +1,12 @@
-import React from "react";
+import React, {useState} from "react";
 import Toggle from 'react-toggle'
 import "./style.css";
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 
 export default class App extends React.Component {
   state = {
+    date: new Date(),
     dark: false,
     incomes: [],
     expenses: [],
@@ -89,30 +92,38 @@ export default class App extends React.Component {
     document.getElementsByTagName("html")[0].classList.toggle("dark");
   }
 
-  render() {
-    var today = new Date();
-    var dd = String(today.getDate()).padStart(2, "0");
-    var mm = String(today.getMonth() + 1).padStart(2, "0"); //January is 0!
-    var yyyy = today.getFullYear();
-    var time =
-      today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-    var date = mm + "/" + dd + "/" + yyyy;
+  changeDate = d => {
+    let date = d;
+    this.setState({
+      date
+    });
+  }
 
+  render() {
     return (
       <div id='app'>
         <h1> <span style={{color:'#1DCDFE'}}>Money</span>U
         <span style={{position: 'absolute', right: '0'}} >
         <Toggle
           icons={{
-            checked: <span style={{float:'left', fontSize:'16px',color:'black'}}>&#9728;&#65039;</span>,
-            unchecked: <span style={{float:'right', fontSize:'18px',color:'white'}}>&#9790;</span>,
+            checked: <span style={{fontSize:'16px',color:'black'}}>&#9728;&#65039;</span>,
+            unchecked: <span style={{fontSize:'18px',color:'white'}}>&#9790;</span>,
           }}
           defaultChecked={false}
           onChange={this.switchTheme} />
         </span>
         </h1>
         <h3>A simple income expense app</h3>
-        <h4>DATE : {"" + date}</h4>
+        <div className="grow" style={
+          {backgroundColor: '#80CFD5'}}>
+          <h2 style={{color: '#FFFFFF'}}>{String(this.state.date).slice(3,15)}</h2>
+          <Calendar
+            onChange={this.changeDate}
+            value={this.state.date}
+          />
+        </div>
+        
+        <div>
         <button
           style={this.state.dark ? {backgroundColor:'#6200EE'} : {backgroundColor:'#1c85db'}}
           id="ai"
@@ -126,15 +137,6 @@ export default class App extends React.Component {
           onClick={this.addExpense}>
           Add Expense
         </button>
-        &nbsp;
-        {(this.state.incomes.length > 0 || this.state.expenses.length > 0) && (
-          <button
-            style={this.state.dark ? {backgroundColor:'white',color:'black'} : {backgroundColor:'black',color:'white'}}
-            id="calculate"
-            onClick={this.calculate}>
-            CALCULATE
-          </button>
-        )}
         <br />
         <br />
         <div>
@@ -190,6 +192,15 @@ export default class App extends React.Component {
             </span>
           ))}
         </div>
+        &nbsp;
+        {(this.state.incomes.length > 0 || this.state.expenses.length > 0) && (
+          <button
+            style={this.state.dark ? {backgroundColor:'white',color:'black'} : {backgroundColor:'black',color:'white'}}
+            id="calculate"
+            onClick={this.calculate}>
+            CALCULATE
+          </button>)}
+      </div>
       </div>
     );
   }
