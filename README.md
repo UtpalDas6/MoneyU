@@ -1,2 +1,2 @@
 # MoneyU
-Simple Income - Expense App
+Simple Income - Expense App for shops.

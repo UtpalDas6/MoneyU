@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import Toggle from 'react-toggle'
 import "./style.css";
 
@@ -104,8 +104,8 @@ export default class App extends React.Component {
         <span style={{position: 'absolute', right: '0'}} >
         <Toggle
           icons={{
-            checked: <span style={{fontSize:'16px',color:'black'}}>&#9728;&#65039;</span>,
-            unchecked: <span style={{fontSize:'18px',color:'white'}}>&#9790;</span>,
+            checked: <span style={{float:'left', fontSize:'16px',color:'black'}}>&#9728;&#65039;</span>,
+            unchecked: <span style={{float:'right', fontSize:'18px',color:'white'}}>&#9790;</span>,
           }}
           defaultChecked={false}
           onChange={this.switchTheme} />
