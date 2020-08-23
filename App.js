@@ -102,7 +102,10 @@ export default class App extends React.Component {
       <div id='app'>
         <h1> <span style={{color:'#1DCDFE'}}>Money</span>U
         <span style={{position: 'absolute', right: '0'}} >
-        <Toggle title='Switch Theme' defaultChecked={false} onChange={this.switchTheme} />
+        <Toggle
+          icons={false}
+          defaultChecked={false}
+          onChange={this.switchTheme} />
         </span>
         </h1>
         <h3>A simple income expense app</h3>
