@@ -1,9 +1,12 @@
-import React from "react";
+import React, {useState} from "react";
+import Toggle from 'react-toggle'
 import "./style.css";
+
 export default class App extends React.Component {
   state = {
+    dark: false,
     incomes: [],
-    expenses: []
+    expenses: [],
   };
 
   handleIncome = i => e => {
@@ -71,12 +74,20 @@ export default class App extends React.Component {
     });
     if (total_income > total_expense) {
       var profit = total_income - total_expense;
-      alert("Profit : " + profit);
+      alert("Profit : Rs." + profit);
     } else {
       var loss = total_expense - total_income;
-      alert("Loss : " + loss);
+      alert("Loss : Rs." + loss);
     }
   };
+
+  switchTheme = s => {
+    let dark = !this.state.dark;
+    this.setState({
+      dark
+    });
+    document.getElementsByTagName("html")[0].classList.toggle("dark");
+  }
 
   render() {
     var today = new Date();
@@ -86,21 +97,35 @@ export default class App extends React.Component {
     var time =
       today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
     var date = mm + "/" + dd + "/" + yyyy;
+
     return (
-      <div>
-        <h1>MoneyU</h1>
+      <div id='app'>
+        <h1> <span style={{color:'#1DCDFE'}}>Money</span>U
+        <span style={{position: 'absolute', right: '0'}} >
+        <Toggle title='Switch Theme' defaultChecked={false} onChange={this.switchTheme} />
+        </span>
+        </h1>
         <h3>A simple income expense app</h3>
         <h4>DATE : {"" + date}</h4>
-        <button id="ai" onClick={this.addIncome}>
+        <button
+          style={this.state.dark ? {backgroundColor:'#6200EE'} : {backgroundColor:'#1c85db'}}
+          id="ai"
+          onClick={this.addIncome}>
           Add Income
         </button>
         &nbsp;
-        <button id="ae" onClick={this.addExpense}>
+        <button
+          style={this.state.dark ? {backgroundColor:'#CF6680'} : {backgroundColor:'#B00020'}}
+          id="ae"
+          onClick={this.addExpense}>
           Add Expense
         </button>
         &nbsp;
         {(this.state.incomes.length > 0 || this.state.expenses.length > 0) && (
-          <button id="calculate" onClick={this.calculate}>
+          <button
+            style={this.state.dark ? {backgroundColor:'white',color:'black'} : {backgroundColor:'black',color:'white'}}
+            id="calculate"
+            onClick={this.calculate}>
             CALCULATE
           </button>
         )}
@@ -109,17 +134,24 @@ export default class App extends React.Component {
         <div>
           {this.state.incomes.map((income, index) => (
             <span key={index}>
-              <input id="income" type="text" placeholder="Enter Item" />
+              <input
+              style={this.state.dark ? {backgroundColor:'#bb86fc'} : {backgroundColor:'#bcdb9d'}}
+              id="income"
+              type="text"
+              placeholder="Enter Item" />
               &nbsp;
               <input
+                style={this.state.dark ? {backgroundColor:'#bb86fc'} : {backgroundColor:'#bcdb9d'}}
                 id="income"
                 type="number"
                 onChange={this.handleIncome(index)}
                 value={income}
-                placeholder="Enter Amount"
+                placeholder="Enter Amount in Rs."
               />
               &nbsp;
-              <button onClick={this.handleIncomeDelete(index)}>X</button>
+              <button
+                style={this.state.dark ? {backgroundColor:'white',color:'black'} : {backgroundColor:'black',color:'white'}}
+                onClick={this.handleIncomeDelete(index)}>X</button>
               &nbsp;
               <br />
               <br />
@@ -129,17 +161,23 @@ export default class App extends React.Component {
         <div>
           {this.state.expenses.map((expense, index) => (
             <span key={index}>
-              <input id="expense" type="text" placeholder="Enter Item" />
+              <input
+                style={this.state.dark ? {backgroundColor:'#e1a0b0'} : {backgroundColor:'#eea189'}}
+                id="expense"
+                type="text" placeholder="Enter Item" />
               &nbsp;
               <input
+                style={this.state.dark ? {backgroundColor:'#e1a0b0'} : {backgroundColor:'#eea189'}}
                 id="expense"
                 type="number"
                 onChange={this.handleExpense(index)}
                 value={expense}
-                placeholder="Enter Amount"
+                placeholder="Enter Amount in Rs."
               />
               &nbsp;
-              <button onClick={this.handleExpenseDelete(index)}>X</button>
+              <button
+                style={this.state.dark ? {backgroundColor:'white',color:'black'} : {backgroundColor:'black',color:'white'}}
+                onClick={this.handleExpenseDelete(index)}>X</button>
               &nbsp;
               <br />
               <br />
