@@ -50,9 +50,13 @@ class MongoDB:
         data = json.loads(data)
         pk = (datetime.strptime(data['date'][0:10],'%Y-%m-%d')+timedelta(1)).strftime('%Y-%m-%d')
         data['date'] = pk
+        data['success'] = ''
+        data['failure'] = ''
         self.col_name.update({ 'date': pk },data, upsert=True )
         data = (self.col_name.find({'date':pk})[0])
         return json.dumps(data, default=str)
 
     def delete_transaction(self):
         self.col_name.drop()
+
+
