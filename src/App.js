@@ -1,28 +1,84 @@
-import React, {useState} from "react";
+import React from "react";
 import Toggle from 'react-toggle'
 import "./style.css";
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import {GoogleLogin, GoogleLogout} from 'react-google-login';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Button from 'react-bootstrap/Button';
+import Accordion from 'react-bootstrap/Accordion';
+import Card from 'react-bootstrap/Card';
 
 export default class App extends React.Component {
   state = {
+    loggedIn: true,
+    name: 'Utpal',
     date: new Date(),
     dark: false,
     incomes: [],
     expenses: [],
+    success: null,
+    failure: null,
   };
 
-  handleIncome = i => e => {
+  componentDidMount(){
+    document.body.style.background = "#e9ecef";
+    let date = new Date()
+    let y = date.getFullYear();
+    let m = String(date.getMonth()+1)
+    m = m.length===1 ? '0'+m : m;
+    let day = String(date.getDate());
+    day = day.length===1 ? '0'+day : day;
+    date = y+'-'+m+'-'+day;
+    fetch('http://127.0.0.1:5000/' + date).then(res => res.json()).then(data => {
+      this.setState({
+        incomes: data.incomes,
+        expenses: data.expenses,
+      });
+    });
+  }
+
+  handleIncomeName = i => e => {
     let incomes = [...this.state.incomes];
-    incomes[i] = e.target.value;
+    let amount = Object.values(incomes[i])[0];
+    let newObj = {};
+    newObj[e.target.value] = typeof(amount)=='undefined'?0:Number(amount);
+    incomes[i] = newObj;
     this.setState({
       incomes
     });
   };
 
-  handleExpense = i => e => {
+  handleIncomeAmount = i => e => {
+    let incomes = [...this.state.incomes];
+    let key = Object.keys(incomes[i]);
+    let newObj = {};
+    key = typeof(key)=='undefined'?'':key;
+    newObj[key] = Number(e.target.value);
+    incomes[i] = newObj;
+    this.setState({
+      incomes
+    });
+  };
+
+  handleExpenseName = i => e => {
     let expenses = [...this.state.expenses];
-    expenses[i] = e.target.value;
+    let amount = Object.values(expenses[i])[0];
+    let newObj = {};
+    newObj[e.target.value] = typeof(amount)=='undefined'?0:Number(amount);
+    expenses[i] = newObj;
+    this.setState({
+      expenses
+    });
+  };
+
+  handleExpenseAmount = i => e => {
+    let expenses = [...this.state.expenses];
+    let key = Object.keys(expenses[i]);
+    let newObj = {};
+    key = typeof(key)=='undefined'?'':key;
+    newObj[key] = Number(e.target.value);
+    expenses[i] = newObj;
     this.setState({
       expenses
     });
@@ -52,7 +108,7 @@ export default class App extends React.Component {
 
   addIncome = e => {
     e.preventDefault();
-    let incomes = this.state.incomes.concat([""]);
+    let incomes = this.state.incomes.concat({});
     this.setState({
       incomes
     });
@@ -60,7 +116,7 @@ export default class App extends React.Component {
 
   addExpense = e => {
     e.preventDefault();
-    let expenses = this.state.expenses.concat([""]);
+    let expenses = this.state.expenses.concat({});
     this.setState({
       expenses
     });
@@ -70,10 +126,10 @@ export default class App extends React.Component {
     var total_income = 0;
     var total_expense = 0;
     this.state.incomes.forEach(income => {
-      total_income += Number(income);
+      total_income += Number(income[Object.keys(income)]);
     });
     this.state.expenses.forEach(expense => {
-      total_expense += Number(expense);
+      total_expense += Number(expense[Object.keys(expense)]);
     });
     if (total_income > total_expense) {
       var profit = total_income - total_expense;
@@ -82,6 +138,19 @@ export default class App extends React.Component {
       var loss = total_expense - total_income;
       alert("Loss : Rs." + loss);
     }
+    //fetch api POST request
+    fetch('http://127.0.0.1:5000/', {
+      method: 'post',
+      headers: {
+        'Accept': 'application/json, text/plain, */*',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(this.state)
+      }).then(res=>res.json())
+        .then(res => this.setState({
+          incomes:res.incomes,
+          expenses:res.expenses
+        }));
   };
 
   switchTheme = s => {
@@ -91,52 +160,80 @@ export default class App extends React.Component {
     });
     document.getElementsByTagName("html")[0].classList.toggle("dark");
   }
+  onSuccess = s => {
+    console.log(s);
+    let loggedIn = true;
+    let success = s;
+    this.setState({
+      loggedIn,
+      success
+    });
+  }
+
+  onFailure = s => {
+    console.log(s);
+    let loggedIn = false;
+    this.setState({
+      loggedIn
+    });
+  }
 
   changeDate = d => {
     let date = d;
     this.setState({
       date
     });
+    let y = date.getFullYear();
+    let m = String(date.getMonth()+1)
+    m = m.length===1 ? '0'+m : m;
+    let day = String(date.getDate());
+    day = day.length===1 ? '0'+day : day;
+    date = y+'-'+m+'-'+day;
+    // fetch api GET request
+    fetch('http://127.0.0.1:5000/'+date).then(res => res.json()).then(data => {
+      this.setState({
+        incomes: data.incomes,
+        expenses: data.expenses,
+      });
+    });
   }
 
   render() {
     return (
       <div id='app'>
-        <h1> <span style={{color:'#1DCDFE'}}>Money</span>U
-        <span style={{position: 'absolute', right: '0'}} >
-        <Toggle
-          icons={{
-            checked: <span style={{fontSize:'16px',color:'black'}}>&#9728;&#65039;</span>,
-            unchecked: <span style={{fontSize:'18px',color:'white'}}>&#9790;</span>,
-          }}
-          defaultChecked={false}
-          onChange={this.switchTheme} />
-        </span>
-        </h1>
-        <h3>A simple income expense app</h3>
-        <div className="grow" style={
-          {backgroundColor: '#80CFD5'}}>
-          <h2 style={{color: '#FFFFFF'}}>{String(this.state.date).slice(3,15)}</h2>
-          <Calendar
-            onChange={this.changeDate}
-            value={this.state.date}
-          />
-        </div>
+      {this.state.loggedIn &&
+      <div>
+              <Accordion>
+                <Card>
+                  <Card.Header>
+                    <Accordion.Toggle style={{width:'100%'}} as={Button} variant="outline-success" eventKey="0">
+                      <h2>{String(this.state.date).slice(3,15)}</h2>
+                    </Accordion.Toggle>
+                  </Card.Header>
+                <Accordion.Collapse eventKey="0">
+              <Card.Body>
+                <Calendar
+                onChange={this.changeDate}
+                value={this.state.date}
+              /></Card.Body>
+              </Accordion.Collapse>
+              </Card>
+              </Accordion>
         
         <div>
-        <button
-          style={this.state.dark ? {backgroundColor:'#6200EE'} : {backgroundColor:'#1c85db'}}
-          id="ai"
+        <Button
+          size='lg'
+          variant='outline-primary'
           onClick={this.addIncome}>
           Add Income
-        </button>
+        </Button>
         &nbsp;
-        <button
-          style={this.state.dark ? {backgroundColor:'#CF6680'} : {backgroundColor:'#B00020'}}
-          id="ae"
+        <Button
+          size='lg'
+          variant='outline-danger'
           onClick={this.addExpense}>
           Add Expense
-        </button>
+        </Button>
         <br />
         <br />
         <div>
@@ -146,20 +243,22 @@ export default class App extends React.Component {
               style={this.state.dark ? {backgroundColor:'#bb86fc'} : {backgroundColor:'#bcdb9d'}}
               id="income"
               type="text"
+              value={Object.keys(income)}
+              onChange={this.handleIncomeName(index)}
               placeholder="Enter Item" />
               &nbsp;
               <input
                 style={this.state.dark ? {backgroundColor:'#bb86fc'} : {backgroundColor:'#bcdb9d'}}
                 id="income"
                 type="number"
-                onChange={this.handleIncome(index)}
-                value={income}
+                onChange={this.handleIncomeAmount(index)}
+                value={income[Object.keys(income)]}
                 placeholder="Enter Amount in Rs."
               />
               &nbsp;
-              <button
-                style={this.state.dark ? {backgroundColor:'white',color:'black'} : {backgroundColor:'black',color:'white'}}
-                onClick={this.handleIncomeDelete(index)}>X</button>
+              <Button
+                variant='outline-dark'
+                onClick={this.handleIncomeDelete(index)}>X</Button>
               &nbsp;
               <br />
               <br />
@@ -172,20 +271,22 @@ export default class App extends React.Component {
               <input
                 style={this.state.dark ? {backgroundColor:'#e1a0b0'} : {backgroundColor:'#eea189'}}
                 id="expense"
+                onChange={this.handleExpenseName(index)}
+                value={Object.keys(expense)}
                 type="text" placeholder="Enter Item" />
               &nbsp;
               <input
                 style={this.state.dark ? {backgroundColor:'#e1a0b0'} : {backgroundColor:'#eea189'}}
                 id="expense"
                 type="number"
-                onChange={this.handleExpense(index)}
-                value={expense}
+                onChange={this.handleExpenseAmount(index)}
+                value={expense[Object.keys(expense)]}
                 placeholder="Enter Amount in Rs."
               />
               &nbsp;
-              <button
-                style={this.state.dark ? {backgroundColor:'white',color:'black'} : {backgroundColor:'black',color:'white'}}
-                onClick={this.handleExpenseDelete(index)}>X</button>
+              <Button
+                variant='outline-dark'
+                onClick={this.handleExpenseDelete(index)}>X</Button>
               &nbsp;
               <br />
               <br />
@@ -194,13 +295,13 @@ export default class App extends React.Component {
         </div>
         &nbsp;
         {(this.state.incomes.length > 0 || this.state.expenses.length > 0) && (
-          <button
-            style={this.state.dark ? {backgroundColor:'white',color:'black'} : {backgroundColor:'black',color:'white'}}
-            id="calculate"
+          <Button
+            variant='outline-dark'
             onClick={this.calculate}>
             CALCULATE
-          </button>)}
+          </Button>)}
       </div>
+      </div>}
       </div>
     );
   }
