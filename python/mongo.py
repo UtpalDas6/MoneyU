@@ -32,10 +32,10 @@ class MongoDB:
             print('Create collection : %s',self.col_name)
             return self.col_name
 
-    def read_transaction(self,data):
-        pk = data
+    def read_transaction(self,userid,date):
+        pk = date
         try:
-            data = self.col_name.find({'date':pk})[0]
+            data = self.col_name.find({'date':pk,'user_id':userid})[0]
         except:
             data = {}
         if (data):
@@ -49,11 +49,14 @@ class MongoDB:
     def insertorupdate_transaction(self,data):
         data = json.loads(data)
         pk = (datetime.strptime(data['date'][0:10],'%Y-%m-%d')+timedelta(1)).strftime('%Y-%m-%d')
+        user_id = data['userdata']['googleId']
         data['date'] = pk
         data['success'] = ''
         data['failure'] = ''
-        self.col_name.update({ 'date': pk },data, upsert=True )
-        data = (self.col_name.find({'date':pk})[0])
+        data['user_id'] = user_id
+        data['userdata'] = ''
+        self.col_name.update({ 'date': pk,'user_id':user_id },data, upsert=True )
+        data = (self.col_name.find({'date':pk,'user_id':user_id})[0])
         return json.dumps(data, default=str)
 
     def delete_transaction(self):

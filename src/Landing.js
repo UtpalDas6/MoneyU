@@ -6,7 +6,7 @@ import Image from 'react-bootstrap/Image';
 import Modal from 'react-bootstrap/Modal';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Typist from 'react-typist';
-import logo from '/home/utpal/MoneyU/MoneyU/src/rupee.png';
+import logo from 'C:\\Users\\Utpal Das\\Desktop\\MoneyU\\src\\rupee.png';
 import Spinner from 'react-bootstrap/Spinner';
 import {GoogleLogin, GoogleLogout} from 'react-google-login';
 import App from './App';
@@ -16,6 +16,7 @@ import { faMoneyBillWaveAlt } from '@fortawesome/free-solid-svg-icons'
 class Landing extends Component {
 
   state = {
+        userdata: null,
         loggedIn: false,
         name: 'Utpal',
         date: new Date(),
@@ -33,11 +34,13 @@ class Landing extends Component {
   }
 
   onSuccess = s => {
+    let userdata = s.profileObj;
     let loggedIn = true;
     let success = s;
     this.setState({
       loggedIn,
-      success
+      success,
+      userdata
     });
     this.handleClose();
   }
@@ -169,7 +172,7 @@ class Landing extends Component {
                 </Modal.Footer>
             </Modal>
             </div>}
-            {this.state.loggedIn && <App />}
+            {this.state.loggedIn && <App userdata={this.state.userdata}/>}
         </Jumbotron>
       </div>
     );

@@ -1,14 +1,13 @@
 html {
-  background-color: #FFFFFF;
+  background-color: #e9ecef;
   color:#121212;
+  font-family: Lato;
 }
 .dark {
   background-color: #212121;
   color: #FFFFFF;
 }
-h1, h2, h3, h4, p {
-  font-family: Lato;
-}
+
 #ai {
   border: none;
   color: white;

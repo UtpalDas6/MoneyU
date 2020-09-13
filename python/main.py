@@ -19,8 +19,8 @@ def home():
         data = mongo.insertorupdate_transaction(request.data)
         return data
 
-@app.route('/<date>',methods = ['GET'])
+@app.route('/<userid>/<date>',methods = ['GET'])
 @cross_origin(origin='localhost',headers=['Content- Type','Authorization'])
-def get_current_time(date):
-    data = mongo.read_transaction(date)
+def get_current_time(userid,date):
+    data = mongo.read_transaction(userid,date)
     return data
