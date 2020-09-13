@@ -211,7 +211,6 @@ export default class App extends React.Component {
     document.getElementsByTagName("html")[0].classList.toggle("dark");
   }
   onSuccess = s => {
-    console.log(s);
     let loggedIn = true;
     let success = s;
     this.setState({
@@ -221,7 +220,6 @@ export default class App extends React.Component {
   }
 
   onFailure = s => {
-    console.log(s);
     let loggedIn = false;
     this.setState({
       loggedIn
