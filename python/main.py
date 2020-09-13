@@ -38,7 +38,7 @@ def create_checkout_session(item,amount):
         'product_data': {
           'name': item,
         },
-        'unit_amount': amount,
+        'unit_amount': int(amount)*100,
       },
       'quantity': 1,
     }],
