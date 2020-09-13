@@ -2,6 +2,7 @@ import React from 'react';
 import { PDFDownloadLink, Page, Text, View, Document, StyleSheet, Image } from '@react-pdf/renderer';
 import Button from 'react-bootstrap/Button';
 import logo from 'C:\\Users\\Utpal Das\\Desktop\\MoneyU\\src\\rupee.png';
+import Spinner from 'react-bootstrap/Spinner'
 
 export default class DownloadButton extends React.Component {
     constructor() {
@@ -90,7 +91,7 @@ export default class DownloadButton extends React.Component {
   );
     const GeneratePdf = () => (
     <PDFDownloadLink document={<MyDocument />} fileName="invoice.pdf">
-    {({ blob, url, loading, error }) => (loading ? 'Loading document...' :
+    {({ blob, url, loading, error }) => (loading ? <Spinner animation="grow" variant="info" /> :
     <Button variant='outline-info'>Invoice</Button>)}
     </PDFDownloadLink>
     )

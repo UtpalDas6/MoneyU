@@ -21,6 +21,7 @@
     "react-pro-sidebar": "^0.4.4",
     "react-rounded-image": "^2.0.2",
     "react-sidenav": "^4.0.6",
+    "react-toastify": "^6.0.8",
     "react-toggle": "^4.1.1",
     "react-typist": "^2.0.5"
   },

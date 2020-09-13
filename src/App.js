@@ -12,6 +12,9 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import DownloadButton from './Invoice';
+import Pay from './stripe';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 export default class App extends React.Component {
   state = {
@@ -200,7 +203,16 @@ export default class App extends React.Component {
     let showalert = true;
     this.setState({
       showalert
-    });    
+    });
+    toast.success('🦄 Details saved successfully!', {
+      position: "top-center",
+      autoClose: 5000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+      });
   }
 
   switchTheme = s => {
@@ -256,9 +268,17 @@ export default class App extends React.Component {
     return (
       <div id='app'>
       {this.state.loggedIn && this.state.showalert &&
-        <Toast style={{zIndex: '99 !important'}} onClose={()=>this.setState({showalert:false})} show={this.state.showalert} delay={3000} autohide>
-        <Toast.Body>Details saved successfully!</Toast.Body>
-      </Toast>}
+        <ToastContainer
+        position="top-center"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover={false}
+        />}
       {this.state.loggedIn &&
       <div>
         <Form>
@@ -407,10 +427,11 @@ export default class App extends React.Component {
                       placeholder="Enter Amount in Rs."
                     />
                     &nbsp;
+                    <Pay item={Object.keys(this.state.expenses[index])[0]} amount={Object.values(this.state.expenses[index])[0]}/>
+                    &nbsp;
                     <Button
                       variant='outline-dark'
                       onClick={this.handleExpenseDelete(index)}>X</Button>
-                    &nbsp;
                     <br />
                     <br />
                   </span>
