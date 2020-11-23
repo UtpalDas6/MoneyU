@@ -12,7 +12,7 @@ data = dict()
 
 mongo =  MongoDB()
 
-stripe.api_key = 'sk_test_51HR0MmKadpvfgLldPvK3mzlUf02100DoHKO0SO3mITHdRoii4zZXUagI6NYSVC77BWF2AsUv04dcPf8o686ayx69001ai9QSYr'
+stripe.api_key = '<stripe secret key>'
 
 @app.route('/',methods = ['POST'])
 @cross_origin(origin='localhost',headers=['Content- Type','Authorization'])
