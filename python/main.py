@@ -47,3 +47,6 @@ def create_checkout_session(item,amount):
     cancel_url='https://example.com/cancel',
   )
   return jsonify(id=session.id)
+
+if __name__=="__main__":
+  app.run(debug=True)
