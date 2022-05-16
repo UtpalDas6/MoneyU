@@ -11,7 +11,7 @@ import Toast from 'react-bootstrap/Toast';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-import DownloadButton from './Invoice';
+//import DownloadButton from './Invoice';
 import Pay from './stripe';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -42,6 +42,7 @@ export default class App extends React.Component {
     let day = String(date.getDate());
     day = day.length===1 ? '0'+day : day;
     date = y+'-'+m+'-'+day;
+    console.log(date);
     let userid = this.props.userdata.googleId;
     fetch('http://127.0.0.1:5000/' + userid + '/' + date).then(res => res.json()).then(data => {
       let incomes = data.incomes;
@@ -113,15 +114,15 @@ export default class App extends React.Component {
     });
   };
 
-  generateInvoice = i => e => {
-    const element = document.createElement("a");
-    let invoice = 'Item : ' + Object.keys(this.state.incomes[i])[0] + '   ' + 'Amount : Rs.' + Object.values(this.state.incomes[i])[0];
-    const file = new Blob([invoice], {type: 'text/plain'});
-    element.href = URL.createObjectURL(file);
-    element.download = "invoice.txt";
-    document.body.appendChild(element); // Required for this to work in FireFox
-    element.click();
-  }
+  // generateInvoice = i => e => {
+  //   const element = document.createElement("a");
+  //   let invoice = 'Item : ' + Object.keys(this.state.incomes[i])[0] + '   ' + 'Amount : Rs.' + Object.values(this.state.incomes[i])[0];
+  //   const file = new Blob([invoice], {type: 'text/plain'});
+  //   element.href = URL.createObjectURL(file);
+  //   element.download = "invoice.txt";
+  //   document.body.appendChild(element); // Required for this to work in FireFox
+  //   element.click();
+  // }
 
   handleExpenseDelete = i => e => {
     e.preventDefault();
@@ -200,6 +201,7 @@ export default class App extends React.Component {
         expenses:res.expenses,
         totalTransactions:res.incomes.length+res.expenses.length
     }));
+    console.log(this.state);
     let showalert = true;
     this.setState({
       showalert
@@ -239,6 +241,8 @@ export default class App extends React.Component {
   }
 
   changeDate = d => {
+    // let dateStr =new Date(d);
+    // dateStr.setDate(dateStr.getDate() + 1);
     let date = d;
     this.setState({
       date
@@ -249,6 +253,7 @@ export default class App extends React.Component {
     let day = String(date.getDate());
     day = day.length===1 ? '0'+day : day;
     date = y+'-'+m+'-'+day;
+    console.log(date);
     let userid = this.props.userdata.googleId;
     // fetch api GET request
     fetch('http://127.0.0.1:5000/'+userid+'/'+date).then(res => res.json()).then(data => {
@@ -284,8 +289,8 @@ export default class App extends React.Component {
         <Form>
           <Row>
           <Col>
-            <Card style={{width:'10rem',borderRadius:'20%'}}>
-              <Card.Img variant="top" src={this.state.userdata.imageUrl} style={{borderRadius:'20%'}} />
+            <Card style={{width:'10rem',borderRadius:'0%'}}>
+              <Card.Img variant="top" src={this.state.userdata.imageUrl} style={{borderRadius:'0%'}} />
               <Card.Body>
               <Card.Title>Hi {this.state.userdata.name}</Card.Title>
               </Card.Body>
@@ -307,7 +312,7 @@ export default class App extends React.Component {
             <Card style={{width:'18rem'}}>
               {/* <Card.Img variant="top" src={logo} /> */}
               <Card.Body>
-                <Card.Title>Total {this.state.profit?'Profit':'Loss'}</Card.Title>
+                <Card.Title>Total {this.state.loss?'Loss':'Profit'}</Card.Title>
                 <Card.Text>
                   {'Rs. '}{this.state.profit?this.state.profit:this.state.loss}
                 </Card.Text>
@@ -320,18 +325,6 @@ export default class App extends React.Component {
               {/* <Card.Img variant="top" src={logo} /> */}
               <Card.Body>
                 <Card.Title>Maximum Sold Product</Card.Title>
-                <Card.Text>
-                  {'NA'}
-                </Card.Text>
-                <Button variant="primary">Customize</Button>
-              </Card.Body>
-            </Card>
-            </Col>
-            <Col>
-            <Card style={{width:'18rem'}}>
-              {/* <Card.Img variant="top" src={logo} /> */}
-              <Card.Body>
-                <Card.Title>Recommendations</Card.Title>
                 <Card.Text>
                   {'NA'}
                 </Card.Text>
@@ -398,7 +391,7 @@ export default class App extends React.Component {
                       placeholder="Enter Amount in Rs."
                     />
                     &nbsp;
-                    <DownloadButton invoice={'MU'+Math.round(Math.random()*1000000)} name={this.state.userdata.name} date={String(this.state.date).slice(3,15)} item={Object.keys(this.state.incomes[index])[0]} amount={Object.values(this.state.incomes[index])[0]}/>
+                    {/* <DownloadButton invoice={'MU'+Math.round(Math.random()*1000000)} name={this.state.userdata.name} date={String(this.state.date).slice(3,15)} item={Object.keys(this.state.incomes[index])[0]} amount={Object.values(this.state.incomes[index])[0]}/> */}
                     &nbsp;
                     <Button
                       variant='outline-dark'
