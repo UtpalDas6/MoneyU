@@ -55,11 +55,14 @@ class MongoDB:
         data['failure'] = ''
         data['user_id'] = user_id
         data['userdata'] = ''
-        self.col_name.update({ 'date': pk,'user_id':user_id },data, upsert=True )
-        data = (self.col_name.find({'date':pk,'user_id':user_id})[0])
+        try:
+            if_present = (self.col_name.find({'date':pk,'user_id':user_id})[0])
+            self.col_name.update_one({'date':pk,'user_id':user_id},{"$set": { "incomes" : data['incomes'],"expenses" : data['expenses']}})
+            print("data updated")
+        except:
+            self.col_name.insert_one(data)
+            print("data inserted")
         return json.dumps(data, default=str)
 
     def delete_transaction(self):
         self.col_name.drop()
-
-
