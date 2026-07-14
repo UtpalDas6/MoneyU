@@ -1,0 +1,145 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// --- Auth (NextAuth / Auth.js Prisma adapter shape) ---
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  accounts      Account[]
+  sessions      Session[]
+
+  incomes    Income[]
+  expenses   Expense[]
+  employees  Employee[]
+  items      InventoryItem[]
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// --- Shop data ---
+
+model Income {
+  id        String   @id @default(cuid())
+  userId    String
+  date      DateTime @db.Date
+  item      String
+  amount    Float
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date])
+}
+
+model Expense {
+  id        String   @id @default(cuid())
+  userId    String
+  date      DateTime @db.Date
+  item      String
+  amount    Float
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date])
+}
+
+model Employee {
+  id        String    @id @default(cuid())
+  userId    String
+  name      String
+  role      String
+  phone     String?
+  joinedAt  DateTime  @default(now()) @db.Date
+  active    Boolean   @default(true)
+
+  user     User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments SalaryPayment[]
+
+  @@index([userId])
+}
+
+model SalaryPayment {
+  id         String   @id @default(cuid())
+  employeeId String
+  month      String   // "YYYY-MM"
+  baseAmount Float
+  bonus      Float    @default(0)
+  deduction  Float    @default(0)
+  paid       Boolean  @default(false)
+  paidAt     DateTime?
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@unique([employeeId, month])
+}
+
+model InventoryItem {
+  id            String   @id @default(cuid())
+  userId        String
+  name          String
+  unit          String   @default("pcs")
+  stockQty      Float    @default(0)
+  reorderLevel  Float    @default(0)
+
+  user    User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entries StockEntry[]
+
+  @@index([userId])
+}
+
+model StockEntry {
+  id        String   @id @default(cuid())
+  itemId    String
+  type      String   // "IN" | "OUT"
+  quantity  Float
+  note      String?
+  date      DateTime @default(now())
+
+  item InventoryItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@index([itemId])
+}
