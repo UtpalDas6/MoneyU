@@ -9,6 +9,8 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: process.env["DATABASE_URL"],
+    // migrate/CLI need a direct (non-pooled) connection for advisory locks;
+    // the app runtime uses the pooled DATABASE_URL via src/lib/db.ts instead.
+    url: process.env["DATABASE_URL_UNPOOLED"] ?? process.env["DATABASE_URL"],
   },
 });
